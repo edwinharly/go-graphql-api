@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -28,8 +29,17 @@ func main() {
 func initializeAPI() (*chi.Mux, *postgres.Db) {
 	router := chi.NewRouter()
 
+	dbport, err := strconv.Atoi(os.Getenv("DBPORT"))
+	fatal(err)
+
 	db, err := postgres.New(
-		postgres.ConnString("localhost", 5432, os.Getenv("DBUSER"), os.Getenv("DBPASS"), "go_graphql_db"),
+		postgres.ConnString(
+			os.Getenv("DBHOST"),
+			dbport,
+			os.Getenv("DBUSER"),
+			os.Getenv("DBPASS"),
+			os.Getenv("DBNAME"),
+		),
 	)
 	fatal(err)
 
